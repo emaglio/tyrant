@@ -44,7 +44,7 @@ class ResetPasswordTest < MiniTest::Spec
     res["model"].email.must_equal "reset@trb.org"
     res["reset_link"].must_equal "confirm_password_url?safe_url=safe_url&email=reset%40trb.org"
 
-    # the password is not touched yet (user hasn't clicked the link)
+    # the actual password has not been changed yet
     assert Tyrant::Authenticatable.new(res["model"]).digest == "123123"
     Tyrant::Authenticatable.new(res["model"]).confirmed?.must_equal true
     Tyrant::Authenticatable.new(res["model"]).confirmable?.must_equal false
@@ -69,7 +69,7 @@ class ResetPasswordTest < MiniTest::Spec
     result["result.contract.default"].errors.messages.inspect.must_equal "{:email=>[\"must be filled\"], :safe_url=>[\"must be filled\", \"Something went wrong please try to reset the password again\", \"Link expired\"], :new_password=>[\"must be filled\", \"Passwords are not matching\"], :confirm_new_password=>[\"must be filled\", \"Passwords are not matching\"]}"
   end
 
-  it "siccessfully confirm reset password" do
+  it "successfully confirm reset password" do
     res = Tyrant::SignUp::Confirmed.(
       email: "reset@trb.org",
       password: "123123",
@@ -91,6 +91,9 @@ class ResetPasswordTest < MiniTest::Spec
     assert Tyrant::Authenticatable.new(result["model"]).digest == "newpassword"
     Tyrant::Authenticatable.new(result["model"]).confirmed?.must_equal true
     Tyrant::Authenticatable.new(result["model"]).confirmable?.must_equal false
+
+    Tyrant::Authenticatable.new(res["model"]).digest_reset_password?("safe_url").must_equal false
+    Tyrant::Authenticatable.new(res["model"]).reset_password_expired?.must_equal true
   end
 
 

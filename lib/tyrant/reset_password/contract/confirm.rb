@@ -1,7 +1,7 @@
 class Tyrant::ResetPassword < Trailblazer::Operation
-  class Confirm < Trailblazer::Operation
+  class GetNewPassword < Trailblazer::Operation
     module Form
-      class GetNewPassword < Reform::Form
+      class Confirm < Reform::Form
         feature Reform::Form::Dry
 
         property :email, virtual: true
@@ -32,7 +32,7 @@ class Tyrant::ResetPassword < Trailblazer::Operation
           required(:new_password).filled(:new_must_match?)
           required(:confirm_new_password).filled(:new_must_match?)
         end
-      end # class GetNewPassword
+      end # class Confirm
     end # module Form
   end # class Confirm
 end

@@ -1,16 +1,19 @@
 require 'tyrant/mailer/operation/mailer'
-require 'tyrant/reset_password/operation/get_email'
 require 'uri'
 
 class Tyrant::ResetPassword < Trailblazer::Operation
   class Request < Trailblazer::Operation
-    step Nested(Tyrant::GetEmail)
+
+    class GetEmail < Trailblazer::Operation
+      step Contract::Build(constant: Form::Request)
+    end
+
+    step Nested( GetEmail )
     step Contract::Validate()
-    step :url_exist!
-    failure :show_errors!, fails_fast: true
     step :model!
     step :generate_password!
     step :reset_password!
+    step :save!
     step :reset_link!
     step :notify_user!
 
@@ -20,6 +23,7 @@ class Tyrant::ResetPassword < Trailblazer::Operation
     end
 
     def show_errors!(options, *)
+      options["error"] = "Url not present" if !options["url"]
     end
 
     def model!(options, params:, **)
@@ -30,10 +34,13 @@ class Tyrant::ResetPassword < Trailblazer::Operation
       options["safe_url"] = generator.()
     end
 
-    def reset_password!(options, model:, safe_url:, **)
+    def reset_password!(options, model:, **)
       auth = Tyrant::Authenticatable.new(model)
-      auth.digest_reset_password!(safe_url)
+      auth.digest_reset_password!( options["contract.default"].safe_url )
       auth.sync
+    end
+
+    def save!(options, model:, **)
       model.save
     end
 
