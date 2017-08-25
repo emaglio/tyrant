@@ -1,12 +1,12 @@
 require 'tyrant/mailer/operation/mailer'
 require 'uri'
 
-class Tyrant::ResetPassword < Trailblazer::Operation
+module Tyrant::ResetPassword
   class Request < Trailblazer::Operation
 
     class GetEmail < Trailblazer::Operation
       step Contract::Build(constant: Form::Request)
-    end
+    end # class GetEmail
 
     step Nested( GetEmail )
     step Contract::Validate()
@@ -57,5 +57,5 @@ class Tyrant::ResetPassword < Trailblazer::Operation
     end
 
     PasswordGenerator = -> { SecureRandom.urlsafe_base64 }
-  end
-end
+  end # class Request
+end # module Tyrant::ResetPassword

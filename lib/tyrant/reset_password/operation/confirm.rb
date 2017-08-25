@@ -1,4 +1,3 @@
-class Tyrant::ResetPassword < Trailblazer::Operation
   class Confirm < Trailblazer::Operation
 
     class GetNewPassword < Trailblazer::Operation
@@ -26,8 +25,8 @@ class Tyrant::ResetPassword < Trailblazer::Operation
       auth.digest!( options["contract.default"].new_password ) # contract.auth_ meta_data.password_digest = ..
       auth.confirmed!
 
-      # make the reset_password expired
-      auth.digest_reset_password!( "nil", DateTime.now)
+      # make the reset password expired
+      auth.reset_password_expired!
 
       auth.sync
     end
@@ -36,5 +35,5 @@ class Tyrant::ResetPassword < Trailblazer::Operation
       model.save
     end
 
-  end
-end
+  end # class Confirm
+end # class Tyrant::ResetPassword

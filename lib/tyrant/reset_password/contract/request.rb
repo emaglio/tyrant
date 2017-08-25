@@ -1,12 +1,13 @@
-class Tyrant::ResetPassword < Trailblazer::Operation
+module Tyrant::ResetPassword
   class Request < Trailblazer::Operation
+
     class GetEmail < Trailblazer::Operation
+
       module Form
         class Request < Reform::Form
           feature Reform::Form::Dry
 
           property :email, virtual: true
-          property :url, virtual: true
 
           validation with: { form: true } do
             configure do
@@ -17,7 +18,6 @@ class Tyrant::ResetPassword < Trailblazer::Operation
               end
             end
             required(:email).filled
-            required(:url).filled
 
             validate(user_exists?: :email) do
               user_exists?
@@ -27,4 +27,4 @@ class Tyrant::ResetPassword < Trailblazer::Operation
       end # module Form
     end # class GetEmail
   end # class Request
-end # class Tyrant::ResetPassword
+end # module Tyrant::ResetPassword
