@@ -3,6 +3,7 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'tyrant'
 require 'minitest/autorun'
 require 'warden'
+require 'webmock/minitest'
 
 class MiniTest::Spec
   include Warden::Test::Mock

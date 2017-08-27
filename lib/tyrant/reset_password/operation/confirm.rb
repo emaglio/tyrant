@@ -1,3 +1,4 @@
+module Tyrant::ResetPassword
   class Confirm < Trailblazer::Operation
 
     class GetNewPassword < Trailblazer::Operation
@@ -36,4 +37,4 @@
     end
 
   end # class Confirm
-end # class Tyrant::ResetPassword
+end # module Tyrant::ResetPassword

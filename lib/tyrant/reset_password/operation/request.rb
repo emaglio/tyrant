@@ -36,7 +36,7 @@ module Tyrant::ResetPassword
 
     def reset_password!(options, model:, **)
       auth = Tyrant::Authenticatable.new(model)
-      auth.digest_reset_password!( options["contract.default"].safe_url )
+      auth.digest_reset_password!( options["safe_url"] )
       auth.sync
     end
 

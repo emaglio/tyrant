@@ -19,13 +19,13 @@ class GitHubTest < MiniTest::Spec
       res["failure_message"].must_equal "State has not been set"
 
       # client_id
-      res = Tyrant::SignUp::GitHub.({state: "login"}, "state" => "login")
+      res = Tyrant::SignUp::GitHub.({"state" => "login"}, "state" => "login")
 
       res.failure?.must_equal true
       res["failure_message"].must_equal "Client_id has not been set"
 
       # client_secret
-      res = Tyrant::SignUp::GitHub.({state: "login"}, "state" => "login", "client_id" => "client_id")
+      res = Tyrant::SignUp::GitHub.({"state" => "login"}, "state" => "login", "client_id" => "client_id")
 
       res.failure?.must_equal true
       res["failure_message"].must_equal "Client_secret has not been set"
