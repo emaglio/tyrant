@@ -5,7 +5,9 @@ require 'json'
 module Tyrant
 
   class SignUp::GitHub < Trailblazer::Operation
-
+    step Contract::Build( constant: Form::GitHub )
+    step :check_app_settings!
+    step Contract::Validate()
     step Policy::Guard(:match_state!)
     step :check_client_id!
     step :check_client_secret!
@@ -13,28 +15,27 @@ module Tyrant
     step :get_user_hash!
     step :model!
 
-    def match_state!(options, params:, **)
-      options["failure_message"] = "State has not been set" if !options["state"]
-      return false if !options["state"]
+    GITHUB_ACCESS_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+    GITHUB_USER_API_URL = 'https://api.github.com/user'
 
+    def check_app_settings!(options, *)
+      # TODO: how?
+      # options["contract.default"].check_app_settings?(options)
+      true
+    end
+
+    def match_state!(options, params:, **)
       params["state"] == options["state"]
     end
 
-    def check_client_id!(options, *)
-      options["failure_message"] = "Client_id has not been set" if !options["client_id"]
-      options["client_id"]
-    end
-
-    def check_client_secret!(options, *)
-      options["failure_message"] = "Client_secret has not been set" if !options["client_secret"]
-      options["client_secret"]
-    end
-
     def get_access_token!(options, params:, **)
-      options["url"] = 'https://github.com/login/oauth/access_token'
+      options["url"] = GITHUB_ACCESS_TOKEN_URL
+
+
+
       options["args"] = []
       options["args"] << ["code", params[:code]] << ["client_id", options["client_id"]] << ["client_secret", options["client_secret"]]
-      options["args"] << ["redirect_uri", options["redirect_uri"]] if options["redirect_uri"] != nil
+      options["args"] << ["redirect_uri", options["redirect_uri"]] unless options["redirect_uri"].nil?
 
       resp = Net::HTTP.get_response( get_uri!(options) )
 
@@ -43,10 +44,16 @@ module Tyrant
         array = element.split('=')
         options["access_token_hash"][array.first] = array.last
       end
+
+      if options["access_token_hash"]["Not Found"]
+        options["failure_message"] = "Wrong client_id or/and client_secret"
+        return false
+      end
+      true
     end
 
     def get_user_hash!(options, access_token_hash:, **)
-      options["url"] = 'https://api.github.com/user'
+      options["url"] = GITHUB_USER_API_URL
       options["args"] = ["access_token", access_token_hash["access_token"]]
 
       resp = Net::HTTP.get_response( get_uri!(options) )
@@ -78,6 +85,6 @@ module Tyrant
       return uri
     end
 
-  end # class GitHub
+  end # class SignUp::GitHub
 
-end # module Tyrant::SignUp
+end # module Tyrant
