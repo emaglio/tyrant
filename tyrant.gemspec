@@ -23,7 +23,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "minitest-line"
 
-  spec.add_dependency "trailblazer", ">= 2.0.1"
+  spec.add_dependency "trailblazer", "> 2.0.7"
+  spec.add_dependency "trailblazer-macro"
+  spec.add_dependency "trailblazer-macro-contract"
   spec.add_dependency "reform",      ">= 2.3.0.rc1"
   spec.add_dependency "dry-validation"
   spec.add_dependency "disposable",  ">= 0.1.11"
@@ -32,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "bcrypt"
 
 
-  # spec.add_dependency "pony"
+  spec.add_dependency "pony"
   # spec.add_dependency "formular"
 
   spec.add_development_dependency "activerecord"

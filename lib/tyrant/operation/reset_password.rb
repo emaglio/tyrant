@@ -16,7 +16,7 @@ module Tyrant
     end
 
     def model!(options, params:, **)
-      options["model"] = User.find_by(email: params[:email])
+      options[:model] = User.find_by(email: params[:email])
     end
 
     def generate_password!(options, generator: PasswordGenerator,  **)
@@ -31,7 +31,7 @@ module Tyrant
     end
 
     def notify_user!(options, model:, new_password:, mailer: Mailer, via: :smtp,  **)
-      mailer.({email: model.email, new_password: new_password}, "via" => via)
+      mailer.(params: { email: model.email, new_password: new_password }, "via" => via)
     end
 
     PasswordGenerator = -> { SecureRandom.base64[0,8] }
