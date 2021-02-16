@@ -2,9 +2,9 @@ require 'trailblazer'
 require 'tyrant/operation/get_new_password'
 
 class Tyrant::ChangePassword < Trailblazer::Operation
-  step Nested(Tyrant::GetNewPassword)
+  step Subprocess(Tyrant::GetNewPassword)
   step Trailblazer::Operation::Contract::Validate()
-  failure :show_errors!,                                fail_fast: true
+  fail :show_errors!, fast_track: true
   step :model!
   step Policy::Guard(:authorize!)
   step :update!
@@ -13,8 +13,9 @@ class Tyrant::ChangePassword < Trailblazer::Operation
     options[:model] = User.find_by(email: params[:email])
   end
 
-  #easy way to show the error in the validation
-  def show_errors!(options, *)
+  # easy way to show the error in the validation
+  def show_errors!(_ctx, *)
+    Railway.fail_fast!
   end
 
   def authorize!(options, model:, current_user:, **)

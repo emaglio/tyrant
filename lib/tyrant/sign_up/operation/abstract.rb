@@ -1,9 +1,9 @@
 module Tyrant
   class SignUp < Trailblazer::Operation
-    step Model( ::User, :new )
-    step Contract::Build( constant: Form::Abstract )
+    step Model(::User, :new)
+    step Contract::Build(constant: Form::Abstract)
     step Contract::Validate()
-    step Contract::Persist( method: :sync ) # write :email to model.
+    step Contract::Persist(method: :sync) # write :email to model.
     step :digest!
     step :save!
 

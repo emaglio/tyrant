@@ -9,17 +9,17 @@ class ChangePasswordTest < MiniTest::Spec
         confirm_password: "123123",
       }
     )
-    res.success?.must_equal true
-    res[:model].email.must_equal "changewrong@trb.org"
+    _(res.success?).must_equal true
+    _(res[:model].email).must_equal "changewrong@trb.org"
 
     assert Tyrant::Authenticatable.new(res[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(res[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(res[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(res[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(res[:model]).confirmable?).must_equal false
 
     res = Tyrant::ChangePassword.(params: {email: "wrong@trb.org", password: "wrong"})
 
-    res.failure?.must_equal true
-    res["result.contract.default"].errors.messages.inspect.must_equal "{:email=>[\"User not found\"], :password=>[\"Wrong Password\"], :new_password=>[\"must be filled\"], :confirm_new_password=>[\"must be filled\"]}"
+    _(res.failure?).must_equal true
+    _(res["result.contract.default"].errors.messages.inspect).must_equal "{:email=>[\"User not found\"], :password=>[\"Wrong Password\"], :new_password=>[\"must be filled\"], :confirm_new_password=>[\"must be filled\"]}"
   end
 
   it "wrong new password" do
@@ -30,17 +30,17 @@ class ChangePasswordTest < MiniTest::Spec
         confirm_password: "123123",
       }
     )
-    res.success?.must_equal true
-    res[:model].email.must_equal "wrongpassword@trb.org"
+    _(res.success?).must_equal true
+    _(res[:model].email).must_equal "wrongpassword@trb.org"
 
     assert Tyrant::Authenticatable.new(res[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(res[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(res[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(res[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(res[:model]).confirmable?).must_equal false
 
     res = Tyrant::ChangePassword.(params: {email: "wrongpassword@trb.org", password: "123123", new_password: "123123", confirm_new_password: "different"})
 
-    res.failure?.must_equal true
-    res["result.contract.default"].errors.messages.inspect.must_equal "{:new_password=>[\"New password can't match the old one\"], :confirm_new_password=>[\"The New Password is not matching\"]}"
+    _(res.failure?).must_equal true
+    _(res["result.contract.default"].errors.messages.inspect).must_equal "{:new_password=>[\"New password can't match the old one\"], :confirm_new_password=>[\"The New Password is not matching\"]}"
   end
 
   it "false policy" do
@@ -51,12 +51,12 @@ class ChangePasswordTest < MiniTest::Spec
         confirm_password: "123123",
       }
     )
-    user1.success?.must_equal true
-    user1[:model].email.must_equal "user1@trb.org"
+    _(user1.success?).must_equal true
+    _(user1[:model].email).must_equal "user1@trb.org"
 
     assert Tyrant::Authenticatable.new(user1[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(user1[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(user1[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(user1[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(user1[:model]).confirmable?).must_equal false
 
     user2 = Tyrant::SignUp::Confirmed.(
       params: {
@@ -65,8 +65,8 @@ class ChangePasswordTest < MiniTest::Spec
         confirm_password: "123123",
       }
     )
-    user2.success?.must_equal true
-    user2[:model].email.must_equal "user2@trb.org"
+    _(user2.success?).must_equal true
+    _(user2[:model].email).must_equal "user2@trb.org"
 
     RaiseNoError = -> {}
 
@@ -81,10 +81,10 @@ class ChangePasswordTest < MiniTest::Spec
      current_user: user2[:model]
     )
 
-    res.failure?.must_equal true
-    res["result.policy.default"].success?.must_equal false
+    _(res.failure?).must_equal true
+    _(res["result.policy.default"].success?).must_equal false
     assert Tyrant::Authenticatable.new(user1[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(user1[:model]).confirmed?.must_equal true
+    _(Tyrant::Authenticatable.new(user1[:model]).confirmed?).must_equal true
   end
 
   it 'change password successfully' do
@@ -96,12 +96,12 @@ class ChangePasswordTest < MiniTest::Spec
       }
     )
 
-    user.success?.must_equal true
-    user[:model].email.must_equal "change@trb.org"
+    _(user.success?).must_equal true
+    _(user[:model].email).must_equal "change@trb.org"
 
     assert Tyrant::Authenticatable.new(user[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(user[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(user[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(user[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(user[:model]).confirmable?).must_equal false
 
     res = Tyrant::ChangePassword.(
       params: {
@@ -113,13 +113,13 @@ class ChangePasswordTest < MiniTest::Spec
      current_user: user[:model]
     )
 
-    res.success?.must_equal true
-    res[:model].email.must_equal "change@trb.org"
+    _(res.success?).must_equal true
+    _(res[:model].email).must_equal "change@trb.org"
 
     assert Tyrant::Authenticatable.new(res[:model]).digest != "123123"
     assert Tyrant::Authenticatable.new(res[:model]).digest == "NewPassword"
-    Tyrant::Authenticatable.new(res[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(res[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(res[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(res[:model]).confirmable?).must_equal false
   end
 end
 

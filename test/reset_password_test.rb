@@ -9,17 +9,17 @@ class ResetPasswordTest < MiniTest::Spec
         confirm_password: "123123",
       }
     )
-    res.success?.must_equal true
-    res[:model].email.must_equal "resetwrong@trb.org"
+    _(res.success?).must_equal true
+    _(res[:model].email).must_equal "resetwrong@trb.org"
 
     assert Tyrant::Authenticatable.new(res[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(res[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(res[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(res[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(res[:model]).confirmable?).must_equal false
 
     res = Tyrant::ResetPassword.(params: {email: "wrong@trb.org"})
 
-    res.failure?.must_equal true
-    res["result.contract.default"].errors.messages.inspect.must_equal "{:email=>[\"User not found\"]}"
+    _(res.failure?).must_equal true
+    _(res["result.contract.default"].errors.messages.inspect).must_equal "{:email=>[\"User not found\"]}"
   end
 
   it 'reset password successfully' do
@@ -31,28 +31,28 @@ class ResetPasswordTest < MiniTest::Spec
       }
     )
 
-    res.success?.must_equal true
-    res[:model].email.must_equal "reset@trb.org"
+    _(res.success?).must_equal true
+    _(res[:model].email).must_equal "reset@trb.org"
 
     assert Tyrant::Authenticatable.new(res[:model]).digest == "123123"
-    Tyrant::Authenticatable.new(res[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(res[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(res[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(res[:model]).confirmable?).must_equal false
 
     new_password = -> { "NewPassword" }
 
     res = Tyrant::ResetPassword.(params: {email: "reset@trb.org"}, "generator" => new_password, "via" => :test)
 
-    res.success?.must_equal true
-    res[:model].email.must_equal "reset@trb.org"
+    _(res.success?).must_equal true
+    _(res[:model].email).must_equal "reset@trb.org"
 
     assert Tyrant::Authenticatable.new(res[:model]).digest != "123123"
     assert Tyrant::Authenticatable.new(res[:model]).digest == "NewPassword"
-    Tyrant::Authenticatable.new(res[:model]).confirmed?.must_equal true
-    Tyrant::Authenticatable.new(res[:model]).confirmable?.must_equal false
+    _(Tyrant::Authenticatable.new(res[:model]).confirmed?).must_equal true
+    _(Tyrant::Authenticatable.new(res[:model]).confirmable?).must_equal false
 
-    Mail::TestMailer.deliveries.length.must_equal 1
-    Mail::TestMailer.deliveries.first.to.must_equal ["reset@trb.org"]
-    Mail::TestMailer.deliveries.first.body.raw_source.must_equal "Hi there, here is your temporary password: NewPassword. We suggest you to modify this password ASAP. Cheers"
+    _(Mail::TestMailer.deliveries.length).must_equal 1
+    _(Mail::TestMailer.deliveries.first.to).must_equal ["reset@trb.org"]
+    _(Mail::TestMailer.deliveries.first.body.raw_source).must_equal "Hi there, here is your temporary password: NewPassword. We suggest you to modify this password ASAP. Cheers"
   end
 end
 

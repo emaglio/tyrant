@@ -8,7 +8,7 @@ module Tyrant
     step :email_options!
     step :send_email!
 
-    def email_options!(options, via: :smtp, **)
+    def email_options!(_ctx, via: :smtp, **)
       Pony.options = {
         from: "admin@email.com",
         via: via,
@@ -24,7 +24,7 @@ module Tyrant
       }
     end
 
-    def send_email!(options, params:, **)
+    def send_email!(_ctx, params:, **)
       Pony.mail(
         { to: params[:email],
           subject: "Reset password for your application",
